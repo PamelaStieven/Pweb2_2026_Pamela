@@ -56,7 +56,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class='btn btn-danger' title='Exclur'
-                                    onclick='return confirm(\"Deseja Excluir?\")'>Deletar</button>
+                                    onclick="return confirm('Deseja Excluir?')">Deletar</button>
                             </form>
                         </td>
                     </tr>
@@ -64,4 +64,5 @@
             </tbody>
         </table>
     </div>
+</div>
 @stop
