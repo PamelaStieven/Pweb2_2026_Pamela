@@ -15,12 +15,12 @@ class AlunoFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array // Esse em específico está criando dados falsos que, ao criarmos a tabela, ele preencherá com esses dados.
+    public function definition(): array
     {
-        return [
+         return [
             'nome' => fake()->name(),
             'cpf' => fake()->numerify('###.###.###-##'),
-            'telefone' => fake()->phoneNumber()
+            'telefone' => fake()->phoneNumber(),
         ];
     }
 }
