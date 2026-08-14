@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Aluno extends Model
 {
-    use HasFactory;
+    use Hasfactory;
+    
     protected $fillable = [
         'nome',
         'cpf',
