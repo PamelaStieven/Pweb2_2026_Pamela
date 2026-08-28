@@ -37,6 +37,7 @@
                     <th scope="col">Nome</th>
                     <th scope="col">CPF</th>
                     <th scope="col">Telefone</th>
+                    <th scope="col">Categoria</th>
                     <th scope="col">Ação</th>
                     <th scope="col">Ação</th>
                 </tr>
@@ -48,6 +49,7 @@
                         <td>{{ $item->nome }}</td>
                         <td>{{ $item->cpf }}</td>
                         <td>{{ $item->telefone }}</td>
+                        <td>{{ $item->categoria->nome }}</td>
                         <td>
                             <a class='btn btn-warning' title='Editar' href="{{ route('aluno.edit', $item->id) }}">Editar</a>
                         </td>
@@ -56,7 +58,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class='btn btn-danger' title='Exclur'
-                                    onclick="return confirm('Deseja Excluir?')">Deletar</button>
+                                    onclick='return confirm(\"Deseja Excluir?\")'>Deletar</button>
                             </form>
                         </td>
                     </tr>
@@ -64,5 +66,4 @@
             </tbody>
         </table>
     </div>
-</div>
 @stop
