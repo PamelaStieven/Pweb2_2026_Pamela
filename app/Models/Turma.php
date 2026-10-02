@@ -16,7 +16,7 @@ class Turma extends Model
         'codigo',
         'data_inicio',
         'data_fim',
-    ];  
+    ];
 
     protected $cast = [
         'curso_id' => 'integer',

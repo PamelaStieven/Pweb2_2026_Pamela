@@ -13,6 +13,6 @@ class TurmaSeeder extends Seeder
      */
     public function run(): void
     {
-        Turma::factory()->count(6)->create();
+           Turma::factory()->count(6)->create();
     }
 }

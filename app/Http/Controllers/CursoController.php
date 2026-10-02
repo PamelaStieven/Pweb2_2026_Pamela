@@ -7,59 +7,92 @@ use Illuminate\Http\Request;
 
 class CursoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $dados = Curso::All();
+
+        return view('curso.list')->with(['dados' => $dados]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    function create()
     {
-        //
+        return view('curso.form');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    function validateForm(Request $request)
     {
-        //
+        $request->validate([
+            'nome' => 'required',
+            'requisito' => 'nullable|string',
+            'carga_horaria' => 'nullable|numeric',
+            'valor' => 'nullable|numeric',
+        ], [
+            'nome.required' => "O :attribute é obrigatorio",
+            'requisito.string' => "O :attribute deve ser caracter",
+            'carga_horaria.numeric' => "O :attribute deve ser númerico",
+            'valor.numeric' => "O :attribute deve ser númerico",
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Curso $curso)
+    function store(Request $request)
     {
-        //
+        //dd($request->all());
+        $this->validateForm($request);
+
+        $data = $request->all();
+
+        Curso::create($data);
+
+        return redirect('curso')->with("success", 'Registro Salvo com sucesso!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Curso $curso)
+    function edit($id)
     {
-        //
+        $data = Curso::find($id);
+
+        // dd($categorias);
+        return view('curso.form')->with(compact('data'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Curso $curso)
+    function update(Request $request, $id)
     {
-        //
+        //dd($request->all());
+        $this->validateForm($request);
+
+        $data = $request->all();
+
+        Curso::find($id)->update($data);
+
+        return redirect('curso')->with("success", 'Registro Atualizado com sucesso!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Curso $curso)
+    function destroy($id)
     {
-        //
+        $curso = Curso::findOrFail($id);
+        // dd($curso->matriculas->count());
+
+        if ($curso->matriculas->count() > 0) {
+            return redirect('curso')->with("error", "Não é possível remover o
+                    curso $curso->nome, pois existem dados associados a ele!");
+        }
+        Curso::destroy($id);
+
+        return redirect('curso')->with("success", 'Registro removido com sucesso!');
+    }
+
+    public function search(Request $request)
+    {
+        if (!empty($request->valor)) {
+            $dados = Curso::where(
+                $request->tipo,
+                'like',
+                "%$request->valor%"
+            )->get();
+        } else {
+            $dados = Curso::All();
+        }
+
+        return view('curso.list', compact('dados'));
     }
 }

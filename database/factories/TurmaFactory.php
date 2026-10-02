@@ -10,17 +10,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TurmaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
     public function definition(): array
     {
         return [
             'nome' => fake()->name(),
-            'curso_id' => (Curso::All()->random()->id),
-            'codigo' => fake()->numerify('TURMA-####'),
+            'codigo' => fake()->unique()->numerify('TURMA-####'),
+            'curso_id' => (Curso::All()->random())->id,
             'data_inicio' => fake()->date(),
             'data_fim' => fake()->date(),
         ];

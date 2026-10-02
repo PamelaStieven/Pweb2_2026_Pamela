@@ -9,4 +9,21 @@ class Curso extends Model
 {
     /** @use HasFactory<\Database\Factories\CursoFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'nome',
+        'requisito',
+        'carga_horaria',
+        'valor',
+    ];
+
+    protected $cast = [
+        'carga_horaria' => 'float',
+        'valor' => 'float'
+    ];
+
+    public function matriculas()
+    {
+        return $this->hasMany(Matricula::class);
+    }
 }

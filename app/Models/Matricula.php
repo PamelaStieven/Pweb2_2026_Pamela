@@ -10,13 +10,13 @@ class Matricula extends Model
     /** @use HasFactory<\Database\Factories\MatriculaFactory> */
     use HasFactory;
 
-       protected $fillable = [
+    protected $fillable = [
         'numero',
         'curso_id',
         'turma_id',
         'aluno_id',
         'data_matricula',
-    ];  
+    ];
 
     protected $cast = [
         'curso_id' => 'integer',
@@ -39,5 +39,4 @@ class Matricula extends Model
     {
         return $this->belongsTo(Aluno::class, 'aluno_id');
     }
-
 }
