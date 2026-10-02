@@ -7,57 +7,72 @@ use Illuminate\Http\Request;
 
 class MatriculaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
-        //
+        $dados = Matricula::all();
+
+        return view('matricula.list')->with(['dados' => $dados,]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $curso = Curso::ByOrderBy('nome')->get();
+        $turma = Turma::ByOrderBy('nome')->get();
+        $aluno = Aluno::ByOrderBy('nome')->get();
+
+        return view('matricula.form')->with(compact('curso', 'turma', 'aluno'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    function validateForm(Request $request)
+    {
+        $request->validate([
+            'aluno_id' => 'required|exists:alunos,id',
+            'turma_id' => 'required|exists:turmas,id',
+            'curso_id' => 'required|exists:cursos,id',
+            'data_matricula' => 'required|date',
+        ], [
+            'aluno_id.required' => "O aluno é obrigatório",
+            'turma_id.required' => "A turma é obrigatória",
+            'curso_id.required' => "O curso é obrigatório",
+            'data_matricula.required' => "A data de matrícula é obrigatória",
+        ]);
+    }
+
     public function store(Request $request)
     {
-        //
+        $this->validateForm($request);
+
+        $data = $request->all();
+
+        Matricula::create($data);
+
+        return redirect('matricula')->with("success", 'Registro inserido com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Matricula $matricula)
+    
+    public function edit($id)
     {
-        //
+        $data = Matricula::find($id);
+        $curso = Curso::ByOrderBy('nome')->get();
+        $turma = Turma::ByOrderBy('nome')->get();
+        $aluno = Aluno::ByOrderBy('nome')->get();
+
+        return view('matricula.form')->with(compact('data', 'curso', 'turma', 'aluno'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Matricula $matricula)
+    
+    public function update(Request $request,$id)
     {
-        //
+        $this->validateForm($request);
+
+        $data = $request->all();
+        Matricula::find($id)->update($data);
+
+
+        return redirect('matricula')->with("success", 'Registro atualizado com sucesso!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Matricula $matricula)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Matricula $matricula)
     {
         //

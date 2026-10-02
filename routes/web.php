@@ -34,6 +34,8 @@ Route::post(
 )->name('aluno.search');
 
 Route::resource('curso', \App\Http\Controllers\CursoController::class);
+Route::get('/curso/{curso}/turmas', [\App\Http\Controllers\TurmaController::class, 'index'])->name('curso.turmas');
+Route::get('/curso/{curso}/turmas/create', [\App\Http\Controllers\TurmaController::class, 'create'])->name('curso.turmas.create');
 Route::post(
     '/curso/search',
     [\App\Http\Controllers\CursoController::class, 'search']
@@ -44,6 +46,7 @@ Route::post(
     '/turma/search',
     [\App\Http\Controllers\TurmaController::class, 'search']
 )->name('turma.search');
+
 Route::resource('matricula', \App\Http\Controllers\MatriculaController::class);
 Route::post(
     '/matricula/search',
