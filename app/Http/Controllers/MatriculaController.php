@@ -3,78 +3,105 @@
 namespace App\Http\Controllers;
 
 use App\Models\Matricula;
+use App\Models\Curso;
+use App\Models\Turma;
+use App\Models\Aluno;
 use Illuminate\Http\Request;
 
 class MatriculaController extends Controller
 {
-   
     public function index()
     {
-        $dados = Matricula::all();
+        $dados = Matricula::All();
 
-        return view('matricula.list')->with(['dados' => $dados,]);
+        return view('matricula.list')->with(['dados' => $dados]);
     }
 
-    public function create()
+    function create()
     {
-        $curso = Curso::ByOrderBy('nome')->get();
-        $turma = Turma::ByOrderBy('nome')->get();
-        $aluno = Aluno::ByOrderBy('nome')->get();
+        $cursos = Curso::orderBy('nome')->get();
+        $turmas = Turma::orderBy('nome')->get();
+        $alunos = Aluno::orderBy('nome')->get();
 
-        return view('matricula.form')->with(compact('curso', 'turma', 'aluno'));
+        return view('matricula.form')->with(compact('cursos', 'turmas', 'alunos'));
     }
+
 
     function validateForm(Request $request)
     {
         $request->validate([
-            'aluno_id' => 'required|exists:alunos,id',
-            'turma_id' => 'required|exists:turmas,id',
             'curso_id' => 'required|exists:cursos,id',
-            'data_matricula' => 'required|date',
+            'turma_id' => 'required|exists:turmas,id',
+            'aluno_id' => 'required|exists:alunos,id',
+            'data_matricula' => 'required',
         ], [
-            'aluno_id.required' => "O aluno é obrigatório",
-            'turma_id.required' => "A turma é obrigatória",
-            'curso_id.required' => "O curso é obrigatório",
-            'data_matricula.required' => "A data de matrícula é obrigatória",
+            'curso_id.required' => "O :attribute é obrigatorio",
+            'turma_id.required' => "O :attribute é obrigatorio",
+            'aluno_id.required' => "O :attribute é obrigatorio",
+            'data_matricula.required' => "O :attribute é obrigatorio",
         ]);
     }
 
-    public function store(Request $request)
+    function store(Request $request)
     {
+        //dd($request->all());
         $this->validateForm($request);
 
         $data = $request->all();
 
         Matricula::create($data);
 
-        return redirect('matricula')->with("success", 'Registro inserido com sucesso!');
+        return redirect('matricula')->with("success", 'Registro Salvo com sucesso!');
     }
 
-    
-    public function edit($id)
+    function edit($id)
     {
         $data = Matricula::find($id);
-        $curso = Curso::ByOrderBy('nome')->get();
-        $turma = Turma::ByOrderBy('nome')->get();
-        $aluno = Aluno::ByOrderBy('nome')->get();
+        $cursos = Curso::orderBy('nome')->get();
+        $turmas = Turma::orderBy('nome')->get();
+        $alunos = Aluno::orderBy('nome')->get();
 
-        return view('matricula.form')->with(compact('data', 'curso', 'turma', 'aluno'));
+        // dd($categorias);
+        return view('matricula.form')->with(compact('data', 'cursos', 'turmas', 'alunos'));
     }
 
-    
-    public function update(Request $request,$id)
+
+    function update(Request $request, $id)
     {
+        //dd($request->all());
         $this->validateForm($request);
 
         $data = $request->all();
+
         Matricula::find($id)->update($data);
 
-
-        return redirect('matricula')->with("success", 'Registro atualizado com sucesso!');
+        return redirect('matricula')->with("success", 'Registro Atualizado com sucesso!');
     }
 
-    public function destroy(Matricula $matricula)
+    function destroy($id)
     {
-        //
+        Matricula::destroy($id);
+
+        return redirect('matricula')->with("success", 'Registro removido com sucesso!');
+    }
+
+    public function search(Request $request)
+    {
+        if (!empty($request->valor)) {
+            $query = Matricula::with(['curso', 'turma', 'aluno']);
+
+            $valor = $request->valor;
+
+            $dados = $query->whereHas(
+                $request->tipo,
+                function ($q) use ($valor) {
+                    $q->where('nome', 'like', "%$valor%");
+                }
+            )->get();
+        } else {
+            $dados = Matricula::All();
+        }
+
+        return view('matricula.list', compact('dados'));
     }
 }

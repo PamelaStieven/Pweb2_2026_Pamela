@@ -1,5 +1,5 @@
 @extends('main')
-@section('titulo', 'Formulário de Turmas')
+@section('titulo', 'Formulário de Turma')
 @section('conteudo')
     <div class="row">
         @php
@@ -11,7 +11,7 @@
         @endphp
 
         <h4>Formulário Turma</h4>
-        <h6>Curso: {{ $curso->nome }}</h6>
+        <h6>Curso:{{ $curso->nome }}</h6>
         <form action="{{ $action }}" method="post" enctype="multipart/form-data">
             @csrf
             @if (!empty($data->id))
@@ -19,15 +19,14 @@
             @endif
 
             <input type="hidden" name="id" value="{{ old('id', $data->id ?? '') }}">
-            <input type="hidden" name="curso_id" value="{{ old('curso_id', isset($data) ? $data->curso_id : $curso->id) }}">
+            <input type="hidden" name="curso_id" value="{{ old('curso_id', isset($data) ? $data->curso_id : $curso->id ?? '') }}">
             <div class="col-6">
                 <label for="nome">Nome</label>
                 <input type="text" name="nome" class="form-control" value="{{ old('nome', $data->nome ?? '') }}">
             </div>
             <div class="col-6">
                 <label for="codigo">Código</label>
-                <input type="text" name="codigo" class="form-control"
-                    value="{{ old('codigo', $data->codigo ?? '') }}">
+                <input type="text" name="codigo" class="form-control" value="{{ old('codigo', $data->codigo ?? '') }}">
             </div>
             <div class="col-6">
                 <label for="data_inicio">Data Início</label>
@@ -42,7 +41,9 @@
 
             <div class="mt-2">
                 <button type="submit" class="btn btn-success">Salvar</button>
-                <a href="{{ route('curso.turmas', $curso->id ?? $data->curso_id) }}" class="btn btn-primary">Voltar</a>            </div>
+                <a href="{{ route('curso.turmas', isset($data) ? $data->curso_id : $curso->id) }}" class="btn btn-primary">
+                    Voltar</a>
+            </div>
         </form>
     </div>
-@stop:
+@stop

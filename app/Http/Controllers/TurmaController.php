@@ -18,42 +18,44 @@ class TurmaController extends Controller
         ]);
     }
 
-    public function create(Curso $curso)
+    function create(Curso $curso)
     {
         return view('turma.form')->with(compact('curso'));
     }
 
-    public function validateForm(Request $request)
+
+    function validateForm(Request $request)
     {
         $request->validate([
             'nome' => 'required',
-            'curso_id' => 'required|exists:cursos,id',
         ], [
-            'nome.required' => "O campo :attribute é obrigatório",
-            'curso_id.required' => "O curso é obrigatório",
+            'nome.required' => "O :attribute é obrigatorio",
         ]);
     }
 
-    public function store(Request $request)
+    function store(Request $request)
     {
+        //dd($request->all());
         $this->validateForm($request);
 
         $data = $request->all();
 
-        Turma::create($data);
+        $turma = Turma::create($data);
 
-        return redirect()->route('curso.turmas', $request->curso_id)->with("success", 'Registro inserido com sucesso!');
+        return redirect()->route('curso.turmas', $turma->curso_id)->with("success", 'Registro Salvo com sucesso!');
     }
 
-    public function edit($id)
+    function edit($id)
     {
-        $data = Turma::findOrFail($id);
-        $curso = Curso::findOrFail($data->curso_id);
+        $data = Turma::find($id);
+        $curso = Curso::find($data->curso_id);
 
+        // dd($categorias);
         return view('turma.form')->with(compact('data', 'curso'));
     }
 
-    public function update(Request $request, $id)
+
+    function update(Request $request, $id)
     {
         $this->validateForm($request);
 
@@ -61,10 +63,10 @@ class TurmaController extends Controller
 
         Turma::find($id)->update($data);
 
-        return redirect()->route('curso.turmas', $request->curso_id)->with("success", 'Registro atualizado com sucesso!');
+        return redirect()->route('curso.turmas', $request->curso_id)->with("success", 'Registro Atualizado com sucesso!');
     }
 
-    public function destroy($id)
+    function destroy($id)
     {
         $data = Turma::find($id);
 
@@ -75,16 +77,22 @@ class TurmaController extends Controller
 
     public function search(Request $request)
     {
-        $curso = Curso::findOrFail($request->curso_id);
+        //dd('teste');
+        $curso = Turma::findOrFail($request->curso_id);
 
         if (!empty($request->valor)) {
-            $dados = Turma::where('curso_id', $curso->id)
-                ->where($request->tipo, 'like', "%{$request->valor}%")
-                ->get();
+            $dados = Turma::where(
+                $request->tipo,
+                'like',
+                "%$request->valor%"
+            )->get();
         } else {
-            $dados = $curso->turmas;
+            $dados = Turma::All();
         }
 
-        return view('turma.list', compact('dados', 'curso'));
+        return redirect()->route('curso.turmas', $request->curso_id)->with([
+            'dados' => $dados,
+            'curso' => $curso,
+        ]);
     }
 }
